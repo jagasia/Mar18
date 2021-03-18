@@ -1,0 +1,837 @@
+Unit testing using JUnit
+---------------------------
+Testing:
+	not debugging
+	finding bugs
+	if functional requirement is there to test the speed and efficiency, then they are also tested
+	to check if the program works as expected
+	testing the functionality
+	requirements are met or not
+	stress testing
+	
+
+in SDLC:	(software development life cycle)
+what are the phases?
+	conception		idea that there needs a solution
+	analysis		requirements document	(SRS)
+	designing		UML diagrams		
+	coding			artifacts like JAR/WAR
+	testing					testing is done after coding
+	deployment
+	maintenence
+	
+	
+But the role of testers start even before coding
+Testers create test cases
+
+Testing is done by executing the program with sample inputs and expecting output based on lot of test cases.
+
+sample inputs (1):
+	2
+	3
+
+sample output (1):
+	5
+
+expected output is 5.		Actual output is 6
+
+test failed
+
+
+Notice that we are testing only 1 unit at a time.
+That one unit can be:
+	a method in java
+
+
+
+
+------------------------------------------------------------
+Junit:
+--------
+	Testing a java program can be done in many ways.
+	
+	Sometimes, we may have to conduct tests in different combination of methods.
+	For example, in a normal scenario.
+	
+1:	execute method 1, method 3, method4, method 6
+2:	execute method 2, method 3, method 5, method 6
+
+categories
+Theories
+parameters
+	to conduct tests
+
+Junit provides solution for all of the testing requirements we discussed
+
+---------------------------------------------
+Environment setup:
+----------------------
+We need junit.jar
+	version 4
+
+
+just add this jar to java project and proceed
+	java project	-> add jar to the "Build Path"
+		add external jar
+
+	dynamic web project	-> WEB-INF/lib
+
+-----------------------------------------------
+AUT		or 	SUT
+Application under Test
+Software under test
+
+
+-------------------------
+Task1:
+	Create a java project
+	Add a new class with couple of methods
+	
+	create a test class with test cases
+
+	run the tests
+
+
+
+
+
+package test;
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
+public class TestRunner {
+
+	public static void main(String[] args) {
+		Result result = JUnitCore.runClasses(MathematicsTest.class);
+		System.out.println(result.getRunCount());
+		System.out.println(result.getRunTime());
+		for(Failure failure:result.getFailures())
+			System.out.println(failure.toString());
+		System.out.println("----------------------");
+		System.out.println(result.wasSuccessful());
+	}
+
+}
+
+
+
+Junit annotations:
+
+@Test
+	represents one test method	or test case
+
+Test Suite
+	contains test cases
+
+in our previous example, 
+	A class had 3 @Test test cases
+
+but we cannot call our class as a test suite
+
+Because, a test suite can have multiple classes also.
+
+@TestSuite		is an annotation that represents a test suite
+
+
+
+@Before		is used on a method that should be considered as Setup
+
+@After		is used on a method that should be considered as tear down
+
+@AfterClass
+
+@BeforeClass
+
+------
+
+
+
+consider the below code:
+
+public class Mathematics {
+	int no1;
+	int no2;
+	int result;
+	
+	public void sum()
+	{
+		result=no1+no2;
+	}
+
+
+this sum() method has dependencies
+
+so before calling this sum() method, we should set up the dependencies
+	@Before is used for that
+
+------------------------------
+Task (before)
+
+	Create a method that depends on instance variables
+		refer to above code, where sum() method depends on no1 and no2
+	use @Before to setup those dependencies.
+
+	change the test case values and test the code
+
+--------------------
+Activity:
+	Identify the difference between
+	@Before
+	@After
+	@BeforeClass
+	@AfterClass
+
+
+
+If we need to reset some variable after execution of every test then this annotation can be used with a method that has the needed code. @After can be used here in this case.....
+
+If a JUnit test case class contains lot of tests which all together need a method which sets up a precondition and that needs to be executed before executing the Test Case class then we can utilize “@BeforeClass” annotation.
+
+In the same way “@AfterClass” annotation can be used to execute a method that needs to be executed after executing all the tests in a JUnit Test Case class.
+
+@Before is used to execute set of preconditions before executing a test.  For example, if there is a need to open some application and create a user before executing a test, then this annotation can be used for that method.  Method that is marked with @Before will be executed before executing every test in the class.
+
+
+Observation:
+@Before annotation is used on a method, that is executed every time before a @Test method
+
+suppose, there are 4 @Test methods, then this @Before method is executed 4 times
+
+@BeforeClass annotation is used on a static method, that is executed only once for that class before any @Test method is executed.
+
+@After and @AfterClass annotations are executed after @Test methods
+
+
+
+public class MathematicsTest {
+
+	private static Mathematics aut=new Mathematics();
+
+	@BeforeClass
+	public static void setup()
+	{
+		System.out.println("Before method");
+		aut.setNo1(100);
+		aut.setNo2(200);		
+	}
+	
+	
+	
+	
+	@Test
+	public void testSum3()
+	{
+		aut.sum();
+		int actual = aut.getResult();
+		assertEquals(300, actual);
+	}
+	
+	@Test
+	public void testSum1()
+	{
+		int no1=12;
+		int no2=13;
+		int expected=15;
+		int actual=aut.sum(no1, no2);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testSum2()
+	{
+		int no1=12;
+		int no2=13;
+		int expected=25;
+		int actual=aut.sum(no1, no2);
+		assertEquals(expected, actual);
+	}
+	@Test
+	public void testDifference()
+	{
+		int no1=12;
+		int no2=13;
+		int expected=-1;
+		int actual=aut.difference(no1, no2);
+		assertEquals(expected, actual);
+	}
+-------------------------------------------------------------------------
+sum
+difference
+product
+divide
+
+for all the 4 methods
+Though before method is executed every time, the values are same.
+
+for all the 4 methods,
+	we have to run the test several times.
+
+for test case 1,
+	we run the program
+
+for test case 2,
+	we run the program
+
+
+---------------------
+TasK
+	@Ignore
+
+use ignore annotation to ignore few test cases when you run
+
+--------------------------------
+Exception Testing:
+---------------------
+sometimes, when we test a method,
+	we expect
+		correct result	or
+		wrong result
+
+	what we usually do not expect is 
+		exception
+
+example:
+	no1=5
+	no2=0
+
+	we expect an exception here
+to specify the expected exceptions,
+	@Test has a property 
+
+
+when we create Dao,
+	it is not good idea to handle the expections in CREATE/READ methods
+because, the calling program has to handle
+
+
+use expection exception when we expect an exception to occur.
+	If exception occurs, the test is passed
+	if exception does not occur, the test is failed
+
+
+	@Test(expected = ArithmeticException.class)
+	public void testDivide1()
+	{
+		int no1=10;
+		int no2=0;
+		int expected=5;
+		int actual=aut.divide(no1, no2);
+		assertEquals(expected, actual);
+	}
+	@Test
+	public void testDivide2()
+	{
+		int no1=10;
+		int no2=2;
+		int expected=5;
+		int actual=aut.divide(no1, no2);
+		assertEquals(expected, actual);
+	}
+
+
+--------
+fail()
+	@Test
+	public void testDivide2()
+	{
+		int no1=10;
+		int no2=2;
+		int expected=15;
+		int actual=aut.divide(no1, no2);
+		//assertEquals(expected, actual);
+		if(expected!=actual)
+		{
+			String message=String.format("Expected is %d, actual is %d", expected,actual);
+			fail(message);
+		}
+	}
+
+-------------------------------------
+timing out:
+-----------
+
+	@Test(timeout = 2000)
+	public void testSpeed() throws InterruptedException
+	{
+		int no1=10;
+		int no2=2;
+		int expected=5;
+		int actual=aut.divide(no1, no2);
+		Thread.sleep(3000);
+		assertEquals(expected, actual);
+		
+	}
+
+specify the timout in milliseconds to ensure that the fails if the method takes more than the timeout to assert
+
+Assertions:
+-------
+Identify the list of assert methods
+	ex:		assertEquals, assertNull
+
+
+assertArrayEquals()
+assertEquals()
+assertTrue() + assertFalse()
+assertNull() + assertNotNull()
+assertSame() and assertNotSame()
+assertThat()
+
+
+1    
+void assertEquals(boolean expected, boolean actual)
+Checks that two primitives/objects are equal.
+2    
+void assertTrue(boolean condition)
+Checks that a condition is true.
+3    
+void assertFalse(boolean condition)
+Checks that a condition is false.
+4    
+void assertNotNull(Object object)
+Checks that an object isn't null.
+5    
+void assertNull(Object object)
+Checks that an object is null.
+6    
+void assertSame(object1, object2)
+The assertSame() method tests if two object references point to the same object.
+7    
+void assertNotSame(object1, object2)
+The assertNotSame() method tests if two object references do not point to the same object.
+8    
+void assertArrayEquals(expectedArray, resultArray);
+The assertArrayEquals() method will test whether two arrays are equal to each other.
+
+
+
+assertNull
+	in our dao, the read(id) method can be tested as follows:
+	if a non existing id or invalid id, is supplied as parameter for read method,
+	we expect a null
+
+	assertNull(dao.read(-1));
+	
+	we get null, then test is pass
+
+assertNotNull
+	assertNotNull(dao.read(123));		//123 is a valid id
+
+	so we expect an object of entity and not a null
+
+	we get null, then test is failed. if we get NOT NULL, then test is passed
+
+assertSame
+	"same" means, the references are same
+	similar to 	==	operator
+
+	x==y		and x and y are NOT primitive, then their references are compared
+
+	Employee rama=new Employee();
+	Employee siva=rama;
+
+	rama==siva		is true
+	assertSame(rama,siva);		is PASS
+
+
+	String str1="hello";
+	String str2="hello";
+	assertSame(str1,str2);		is PASS
+
+	String str2=new String("hello");
+	String str1=new String("hello");
+	assertSame(str1,str2);		is FAIL
+
+
+
+	@Test
+	public void testStrings1()
+	{
+		String str1="hello";
+		String str2="hello";
+		assertSame(str1,str2);	//		is PASS
+
+	}
+	
+	@Test
+	public void testStrings2()
+	{
+		String str2=new String("hello");
+		String str1=new String("hello");
+		assertNotSame(str1,str2);		//references are different
+	}
+
+
+
+------------------------------------------------------------
+Test Suite:
+-----------
+
+Create a project that contains
+	TestCase1
+		1 test method
+
+	TestCase2
+		4 test method
+
+1) Run TestCase1
+	we find 1/1 test conducted
+
+2) Run TestCase2
+	we find 4/4 test conducted
+
+3) Right click the project and run as junit test
+	we find 5/5 test conducted
+
+I want to ignore one of the test method.
+	
+
+package jag;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses({ TestCase1.class, TestCase2.class })
+public class MainSuite {
+
+}
+
+
+@RunWith
+	annotation
+
+	Suite.class
+	Categories.class
+	Theories.class
+	Paramterized.class
+
+
+Task:
+	create a test suite
+		right click project, add new "Test Suite"
+	once you enter the package name, all the test classes present in the package are avaialble to select
+	select all and submit
+
+@RunWith(Suite.class)
+@SuiteClasses({ TestCase1.class, TestCase2.class })
+public class MainSuite {
+
+}
+
+
+Run the test suit class and observe that all the test methods in the suite classes are executed
+
+
+Categories
+-----------
+Identify the use of categories annotation in junit.
+
+Among the 5 methods (remove or comment @Ignore) present across 2 test case classes,
+	mark some of the classes (say 3) as Admin category
+
+	Hint:	create a marker interface 	Admin
+
+Change the @RunWith option from "Suite" to "Categories"
+use include categories annotation to mention the category as "Admin"
+
+run the test suite and observe that only "Admin" category tests are performed.
+
+
+
+
+@RunWith(Categories.class)
+@IncludeCategory({Admin.class})
+@SuiteClasses({ TestCase1.class, TestCase2.class })
+public class MainSuite {
+
+}
+
+
+Task:
+	create another marker interface "User"
+
+mark some methods with "Admin" and
+	some methods with "User" and
+	some method with both "Admin" and "User"
+
+
+In test suites
+	run with
+		1) admin
+		2) user
+		3) both admin and user
+
+
+
+@RunWith(Categories.class)
+//@IncludeCategory({Admin.class, User.class})
+@Categories.IncludeCategory({Admin.class})
+@SuiteClasses({ TestCase1.class, TestCase2.class })
+public class MainSuite {
+
+}
+
+--------------------------------------------------
+Parameterized Tests 
+• Creating Parameterized Tests
+
+Activity:
+	What are Parameterized Test
+
+
+	parameterized test allows the same test method to run again and again using diffrent values
+
+we should run the test suite once, but the test method should be executed multiple times using different values.
+
+If we have defined, 5 set of values, then the test case method should be executed 5 times, utilizing each set every time.
+
+2,3,5
+	means?		2,3 are inputs		and 5 is the result
+
+10,20,30
+	means?		10,20 are inputs	and 30 is the result
+
+2,3,5
+10,20,30
+5,6,11
+9,8,17
+2,7,9
+
+there are 5 sets in this example
+
+
+Note:
+	we are using @RunWith		(not only in the Test Suite)
+		we are using @RunWith on the Test class
+
+The moment we use 
+	@RunWith(Parameterized.class)
+
+	test runner will expect a constructor	---------------------------------
+
+Whenever a test class uses @RunWith(Parameterized.class)
+1) a constructor should be there
+2) public static collection anyMethod() should create a list of test cases.
+	the order of the values inside the test case should match with the constructor
+		@Parameterized.Parameters
+
+
+
+
+
+
+package jag;
+
+public class Mathematics {
+	int no1;
+	int no2;
+	float result;
+	public Mathematics() {}
+	public Mathematics(int no1, int no2, float result) {
+		super();
+		this.no1 = no1;
+		this.no2 = no2;
+		this.result = result;
+	}
+	public int getNo1() {
+		return no1;
+	}
+	public void setNo1(int no1) {
+		this.no1 = no1;
+	}
+	public int getNo2() {
+		return no2;
+	}
+	public void setNo2(int no2) {
+		this.no2 = no2;
+	}
+	public float getResult() {
+		return result;
+	}
+	public void setResult(float result) {
+		this.result = result;
+	}
+	public void sum()
+	{
+		result=no1+no2;
+	}
+	public void difference()
+	{
+		result=no1-no2;
+	}
+	public void product()
+	{
+		result=no1*no2;
+	}
+	public void divide()
+	{
+		result=no1/no2;
+	}
+}
+
+
+package test;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import jag.Mathematics;
+
+@RunWith(Parameterized.class)
+public class TestMaths {
+	int no1, no2;
+	float expected;
+	
+	Mathematics aut=new Mathematics();
+	
+	public TestMaths(int no1, int no2, float expected)
+	{
+		this.no1=no1;
+		this.no2=no2;
+		this.expected=expected;
+	}
+	
+	@Before
+	public void setUp() throws Exception {
+		
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public final void testSum() {
+//		int no1=2;
+//		int no2=3;
+		aut.setNo1(no1);
+		aut.setNo2(no2);
+//		float expected=no1+no2;
+		
+		aut.sum();
+		float actual=aut.getResult();
+		assertEquals(expected, actual,0);
+		
+	}
+	
+	@Parameterized.Parameters
+	   public static Collection sumNumbers() {
+	      return Arrays.asList(new Object[][] {
+	         { 2, 3, 5 },
+	         { 6, 3, 9 },
+	         { 19, 1, 20 },
+	         { 22, 1, 23 },
+	         { 23, 1, 24 },
+	         {1,2,3}
+	      });
+	   }
+
+
+	/*
+	 * @Test public final void testDifference() { fail("Not yet implemented"); //
+	 * TODO }
+	 * 
+	 * @Test public final void testProduct() { fail("Not yet implemented"); // TODO
+	 * }
+	 * 
+	 * @Test public final void testDivide() { fail("Not yet implemented"); // TODO }
+	 */
+}
+--------------------------------------------------------------
+Task:
+Create a test class with 
+	@RunWith(Parameterized.class)
+
+and supply few test cases in the @Parameterized.Parameters method
+
+Observe that a Test runs for all the test cases supplied in parameterized paramters method
+
+
+------------------------
+Theories:
+-------
+package test;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
+
+import jag.Mathematics;
+
+@RunWith(Theories.class)
+public class MathsTest4 {
+
+	Mathematics aut=new Mathematics();
+	@DataPoint
+	public static int no1=2;
+	@DataPoint
+	public static int no2=3;
+	@DataPoints
+	public static int arr[]= {1,2,3};
+	@Theory
+	public void theory(int x, int y)
+	{
+		int expected=x+y;
+//		if(expected==6)
+//			expected++;
+		System.out.println(x+":"+y+":"+expected);
+		aut.setNo1(x);
+		aut.setNo2(y);
+		aut.sum();
+		int actual=(int) aut.getResult();
+		assertEquals(expected, actual);
+		
+	}
+}
+
+------------------------------------
+To run junit, 
+1) right click program or project and run as Junit test
+2) console runner
+			Result result = JUnitCore.runClasses(MathematicsTest.class);
+		System.out.println(result.getRunCount());
+		System.out.println(result.getRunTime());
+		for(Failure failure:result.getFailures())
+			System.out.println(failure.toString());
+		System.out.println("----------------------");
+		System.out.println(result.wasSuccessful());
+
+
+------------------------------------------------------------
+to run in command prompt:
+
+set classpath=%classpath%;D:\Softwares\junit\junit-4.10.jar;
+
+javac Test1.java
+java Test1
+
+
+
+
+
+What is Ant?
+	is a build tool 
+
+without IDE like eclipse, how we can create jar, war, ear etc?
+
+we need build tools like
+	Apache Maven
+	Apache Ant
+	Apache SVN
+
